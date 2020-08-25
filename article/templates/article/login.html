@@ -1,0 +1,148 @@
+{% extends 'article/base.html' %}
+{% load static %}
+{% block title %} Login {% endblock title %}
+{% block body %}
+
+<div class="heading-page header-text">
+    <section class="page-heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-content">
+                        <h4>Login</h4>
+                        <h2>Let’s stay in touch!</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="contact-us">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="down-contact">
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="sidebar-item contact-form">
+                                <div class="sidebar-heading">
+                                    <h2>Login</h2>
+                                </div>
+                                <div class="content">
+                                    <form id="login_form" action="" method="post" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="mb-3">
+                                                <span class="alert alert-success p-2" id="login_success"
+                                                    style="font-size: small;display: none;"> Success!</span>
+                                                <span class="alert alert-danger p-2" id="login_fail"
+                                                    style="font-size: small;display: none;"></span>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="username" type="text" id="username"
+                                                        placeholder="Username">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="password" type="password" id="password"
+                                                        placeholder="Input Your Password">
+                                                </fieldset>
+                                            </div>
+                                          
+                                          
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <button type="submit" id="form-submit" class="main-button">Login</button>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-lg-12 mt-3">
+                                               <span class="">New here? <a href="{% url 'register' %}"> Register Now</a></span>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+           
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %} 
+<script type="text/javascript">
+$("#login_form").submit(function(e){
+    e.preventDefault();
+    var username = $("#username").val();
+    var pas = $("#password").val();
+    
+    
+    if(username == ""){
+        $("#login_success").fadeOut();
+        $("#login_fail").hide();
+        $("#login_fail").text("Please Input Username");
+        $("#login_fail").fadeIn(1000);
+        return
+    }
+    else if(pas == ""){
+        $("#login_success").fadeOut();
+        $("#login_fail").fadeOut();
+        $("#login_fail").text("Please Input Password");
+        $("#login_fail").fadeIn(1000);
+        return
+    }else {
+        $("#login_success").fadeOut();
+        $("#login_fail").fadeOut();
+        $.ajax({
+                url: "{% url 'login' %}",
+                type: "POST",
+                data: { usr: username,
+                    pas: pas,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'}
+            })
+            .done(function(response) {
+                var msg = response["msg"];
+                if(response["status_code"]==200){
+                    $("#login_success").text(msg);
+                    $("#login_success").fadeIn(); 
+                    setTimeout(function(){
+                    window.location = "{% url 'index' %}";
+                    },1000);
+                }
+                if(response['status_code']==503){
+                    $("#login_success").hide();
+                    $("#login_fail").hide();
+                    $("#login_fail").text(msg);
+                    $("#login_fail").fadeIn();
+                }
+               
+               
+
+
+
+            })
+            .fail(function (response) {
+                    $("#login_success").hide();
+                    $("#login_fail").hide();
+                    $("#login_fail").text(msg);
+                    $("#login_fail").fadeIn();
+                })
+
+    }
+
+
+});
+</script>
+
+{% endblock %}

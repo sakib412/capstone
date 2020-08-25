@@ -1,0 +1,256 @@
+{% extends 'article/base.html' %}
+{% load static %}
+{% block title %} {{ posts.title }} {% endblock title %}
+{% block body %}
+
+
+<!-- Page Content -->
+<!-- Banner Starts Here -->
+<div class="heading-page header-text">
+    <section class="page-heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-content">
+                        <h4>{{ posts.category }}</h4>
+                        <h2>{{ posts.title }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Banner Ends Here -->
+
+
+
+<section class="blog-posts grid-system">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="all-blog-posts">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="blog-post">
+                                <div class="blog-thumb">
+                                    <img class="img-fluid" src="{{ posts.thumbnail.url }}" alt="">
+                                </div>
+                                <div class="down-content">
+                                    <span>{{ posts.category }}</span>
+                                    <a>
+                                        <h4>{{ posts.title }}</h4>
+                                    </a>
+                                    <ul class="post-info">
+                                        <li>{{ posts.author.user.first_name }} {{ posts.author.user.last_name }}</li>
+                                        <li>{{ posts.created_on|date:"F j, Y" }}</li>
+                                        <li><a href="#comment-section">{{ posts.comments.count }} Comments</a></li>
+                                    </ul>
+                                    <hr>
+                                    <div class="mt-5 " style="word-wrap: break-word;">
+                                        {% autoescape off %}
+                                        {{ posts.content }}
+                                        {% endautoescape %}
+                                         </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12" id="comment-section">
+                            <div class="sidebar-item comments">
+                                <div class="sidebar-heading">
+                                    <!-- {{ birthday.year }} Years {{ birthday.month }} months {{ birthday.day }} days -->
+                                    <h2><span id="comment-count">{{ posts.comments.count }}</span> comments </h2>
+                                </div>
+                                <div class="content">
+                                    <ul id="comment-all">
+                                        {% for comment in comments %}
+                                        <li class="">
+                                            <div class="author-thumb">
+                                                <img src="{{ comment.name.avatar.url }}" alt="{{ comment.name }}">
+                                            </div>
+                                            <div class="right-content">
+                                                <h4>{{ comment.name.user.first_name }}
+                                                    {{ comment.name.user.last_name }}<span>{{ comment.created_on|date:"F j, Y" }}</span>
+                                                </h4>
+                                                <p>{{ comment.body }} </p>
+                                            </div>
+                                        </li>
+                                        <br>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="sidebar-item submit-comment">
+                                <div class="sidebar-heading">
+                                    <h2>Your comment</h2>
+                                </div>
+                                <div class="content">
+                                    <!-- <form id="comment" method="post"> -->
+
+                                    <div class="mb-3">
+                                        <span class="alert alert-success p-2" id="comment_success"
+                                            style="font-size: small;display: none;"> Success!</span>
+                                        <span class="alert alert-danger p-2" id="comment_fail"
+                                            style="font-size: small;display: none;"> Something went wrong! Try
+                                            Again</span>
+                                    </div>
+
+
+                                    <div class="row">
+
+                                        {% if user.is_authenticated %}
+                                        <div class="col-lg-12">
+                                            <fieldset>
+                                                <textarea name="comment-body" rows="6" id="comment-body"
+                                                    placeholder="Type your comment" required=""></textarea>
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <fieldset>
+                                                <button type="submit" id="comment-submit"
+                                                    class="main-button">Submit</button>
+                                            </fieldset>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-lg-12">
+
+                                            <p>You must <a href="{% url 'login' %}">login</a> to comment</p>
+
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- </form> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="sidebar-item search">
+                                <form id="search_form" name="gs" method="GET" action="#">
+                                    <input type="text" name="q" class="searchText" placeholder="type to search..."
+                                        autocomplete="on">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="sidebar-item recent-posts">
+                                <div class="sidebar-heading">
+                                    <h2>Recent Posts</h2>
+                                </div>
+                                <div class="content">
+                                    <ul>
+                                        {% for post in post3 %}
+                                        <li><a href="{% url 'singlePost' post.category.category_slug post.slug %}">
+                                                <h5> &rAarr; {{ post.title }}</h5>
+                                                <span>{{ post.created_on|date:"F j, Y" }}</span>
+                                            </a></li>
+                                        {% endfor %}
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="sidebar-item categories">
+                                <div class="sidebar-heading">
+                                    <h2>Categories</h2>
+                                </div>
+                                <div class="content">
+                                    <ul>
+                                        {% for category in categories %}
+                                        <li>- <a href="{% url 'category' category.category_slug %}"> {{ category }}
+                                                <span class="text-muted"> ({{ category.posts.count }})</span></a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock body %}
+
+{% block script %}
+<script type="text/javascript">
+    $("#comment-submit").click(function () {
+        var commennt_body = $("#comment-body").val();
+
+
+        if (commennt_body == "") {
+            $("#comment_success").hide();
+            $("#comment_fail").hide();
+            $("#comment_fail").text("Please Input Something!");
+            $("#comment_fail").show();
+            return
+        } else {
+            $.ajax({
+                url: "{% url 'singlePost' posts.category.category_slug posts.slug %}",
+                type: "POST",
+                data: {
+                    commentbody: commennt_body,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+            })
+                .done(function (response) {
+                    var s = $("#comment-count")[0].innerText;
+
+                    var count = parseInt(s);
+
+                    $("#comment_fail").hide();
+                    var html_data = ` <li>
+                                            <div class="author-thumb">
+                                                <img src="${response['avatar']}" alt="${response['name']}">
+                                            </div>
+                                            <div class="right-content">
+                                                <h4>${response['name']} <span>${response['time']} </span>
+                                                </h4>
+                                                <p>${response['body']} </p>
+                                            </div>
+                                        </li>`;
+                    if (response["status_code"] == 200) {
+                        $("#comment-all").append(html_data);
+                        $("#comment_success").text(response['msg']);
+                        $("#comment-count").text(count + 1);
+                        $("#comment_success").fadeIn();
+
+                    }
+                    else if (response['status_code'] == 404) {
+                        $("#comment_success").hide();
+                        $("#comment_fail").hide();
+                        $("#comment_fail").text(response['msg']);
+                        $("#comment_fail").show();
+                    }
+
+
+                })
+                .fail(function (response) {
+                    $("#comment_success").hide();
+                    $("#comment_fail").hide();
+                    $("#comment_fail").text("Something went wrong!");
+                    $("#comment_fail").show();
+                })
+        }
+        $("#comment-body").val("");
+
+
+
+    })
+
+</script>
+{% endblock %}

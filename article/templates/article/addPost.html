@@ -1,0 +1,153 @@
+{% extends 'article/base.html' %}
+{% load static %}
+{% block title %} Add New Post {% endblock title %}
+{% block body %}
+
+
+<div class="heading-page header-text">
+    <section class="page-heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-content">
+                        <h4>Add Post</h4>
+                        <h2>Create New Post</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+
+
+
+
+<section class="contact-us">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="down-contact">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="sidebar-item contact-form">
+                                <div class="sidebar-heading">
+                                    <h2 style="font-size: 2rem;">Create New Post</h2>
+                                </div>
+                                <div class="content">
+                                    <form id="newPost" action="{% url 'createPost' %}" method="post"
+                                        enctype="multipart/form-data">
+                                        <div class="row">
+                                            {% csrf_token %}
+
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="title" type="text" id="title" placeholder="Post Title">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-11 col-sm-12">
+                                                <fieldset>
+                                                    <input name="slug" type="text" id="slug" placeholder="Post Slug">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="thumbnail">Post Thumbnail:</label>
+                                            </div>
+                                            <div class="col-md-10 col-sm-12">
+
+                                                <input class="form-control" type="file" name="thumbnail" id="thumbnail">
+
+                                            </div>
+
+
+                                            <div class="col-md-2">
+                                                <label for="category">Select Category :</label>
+                                            </div>
+                                            <div class="col-md-3 col-sm-12 mb-3">
+                                                <fieldset>
+                                                    <select class="form-control " name="category" id="category">
+                                                        {% for category in categories %}
+                                                        <option value="{{ category.category_slug }}">{{ category }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+
+                                            <div class="col-lg-12">
+
+                                                <textarea name="content" rows="15" id="content"
+                                                    placeholder="Write Post..." required="">
+                                                    </textarea>
+
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <button type="submit" id="form-submit" class="main-button">Create
+                                                        Post</button>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</section>
+
+{% endblock body %}
+
+
+{% block script %}
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+
+<script type="text/javascript">
+    CKEDITOR.replace('content');
+
+    $("#newPost").submit(function(e){
+        var str = CKEDITOR.instances.content.getData();
+        $("#content").val(str);
+
+    });
+
+    jQuery(document).ready(function ($) {
+        
+
+
+        $('input[name="title"]').keyup(function () {
+            var slug = $(this).val();
+            
+            
+            setTimeout(function () {
+                $("#slug").val(slug.toLowerCase().replace(/[^\w ]+/g, '').replace(/ +/g, '-'));
+            }, 1000);
+
+            
+
+        });
+
+
+
+        
+
+
+
+    });
+
+
+
+</script>
+
+{% endblock %}

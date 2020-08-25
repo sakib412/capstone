@@ -1,0 +1,140 @@
+{% extends 'article/base.html' %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block body %}
+    <!-- Page Content -->
+    <!-- Banner Starts Here -->
+    <div class="main-banner header-text">
+        <div class="container-fluid">
+            <div class="owl-banner owl-carousel">
+
+                {% for post in posts %}
+                <div class="item">
+                    <img class="img-fluid" style="min-height: 20rem; max-height: 20rem;" src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+                    <div class="item-content">
+                        <div class="main-content">
+                            <div class="meta-category">
+                                <span><a
+                                    href="{% url 'category' post.category.category_slug %}">{{ post.category }}</a></span>
+                            </div>
+                            <a href="{% url 'singlePost' post.category.category_slug post.slug %}">
+                                <h4>{{ post.title }}</h4>
+                            </a>
+                            <ul class="post-info">
+                                <li><a href="#">{{ post.author }}</a></li>
+                                <li><a href="#">{{ post.created_on|date:"F j, Y" }}</a></li>
+                                <li><a href="#">{{ post.comments.count}} Comments</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+              
+                
+            </div>
+        </div>
+    </div>
+    <!-- Banner Ends Here -->
+<section class="blog-posts">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="sidebar-heading">
+                    <h2 style="
+                    font-size: 2rem;">Recent Posts</h2>
+                </div>
+                <div class="all-blog-posts">
+                    
+                    <div class="row">
+
+                        {% for post in post_list %}
+
+                        <div class="col-lg-12">
+                            <div class="blog-post">
+                                <div class="blog-thumb">
+                                    <img style="max-height: 350px;" src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+                                </div>
+                                <div class="down-content">
+                                    <span><a
+                                            href="{% url 'category' post.category.category_slug %}">{{ post.category }}</a>
+                                    </span>
+                                    <a href="{% url 'singlePost' post.category.category_slug post.slug %}">
+                                        <h4>{{ post.title }}</h4>
+                                    </a>
+                                    <ul class="post-info">
+                                        <li><a href="#">{{ post.author.user.first_name }} {{ post.author.user.last_name }}</a></li>
+                                        <li><a href="#">{{ post.created_on|date:"F j, Y" }}</a></li>
+                                        <li><a href="{% url 'singlePost' post.category.category_slug post.slug %}#comment-section">{{ post.comments.count }} Comments</a></li>
+                                    </ul>
+                                    <p style="word-wrap: break-word;">{{ post.content|slice:":250"|striptags }} ...
+                                    </p>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+
+                        {% if post_list.has_other_pages %}
+                        <div class="col-lg-12">
+                            <ul class="page-numbers">
+                                {% if post_list.has_previous %}
+                                <li><a href="?page={{ post_list.previous_page_number }}"><i class="fa fa-angle-double-left"></i></a></li>
+                                <li><a href="?page=1">1</a></li>
+                                {% endif %}
+
+
+                                <li class="active"><a>{{ post_list.number }}</a>
+                                </li>
+
+                                {% if post_list.has_next %}
+                                <li><a>.</a></li>
+                                {% endif %}
+
+                                {% if post_list.has_next %}
+                                <li><a href="?page={{ post_list.paginator.num_pages }}">{{ post_list.paginator.num_pages }}</a></li>
+                                <li><a href="?page={{ post_list.next_page_number }}"><i class="fa fa-angle-double-right"></i></a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="sidebar-item search">
+                                <form id="search_form" name="gs" method="GET" action="#">
+                                    <input type="text" name="q" class="searchText" placeholder="type to search..."
+                                        autocomplete="on">
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="sidebar-item categories">
+                                <div class="sidebar-heading">
+                                    <h2>Categories</h2>
+                                </div>
+                                <div class="content">
+                                    <ul>
+                                        {% for category in categories %}
+                                        <li>- <a href="{% url 'category' category.category_slug %}"> {{ category }} <span class="text-muted"> ({{ category.posts.count }})</span></a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock body %}

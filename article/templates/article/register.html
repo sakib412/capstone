@@ -1,0 +1,210 @@
+{% extends 'article/base.html' %}
+{% load static %}
+{% block title %} Register {% endblock title %}
+{% block body %}
+
+<div class="heading-page header-text">
+    <section class="page-heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-content">
+                        <h4>Register</h4>
+                        <h2>Let’s stay in touch!</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="contact-us">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="down-contact">
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="sidebar-item contact-form">
+                                <div class="sidebar-heading">
+                                    <h2>Registration</h2>
+                                </div>
+                                <div class="content">
+                                    <div class="mb-3">
+                                        <span class="alert alert-success p-2" id="login_success"
+                                            style="font-size: small;display: none;"> Success!</span>
+                                        <span class="alert alert-danger p-2" id="login_fail"
+                                            style="font-size: small;display: none;"> Something went wrong! Try
+                                            Again</span>
+                                    </div>
+                                    <form name="register_form" id="register_form" action="" method="post" enctype="multipart/form-data"> 
+                                        <div class="row">
+                                            {% csrf_token %}
+                                            
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="fname" type="text" id="fname" placeholder="First name"
+                                                        required="">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="lname" type="text" id="lname" placeholder="Last name"
+                                                        required="">
+                                                </fieldset>
+                                            </div>
+
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="username" type="text" id="username"
+                                                        placeholder="Username">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="email" type="email" id="email"
+                                                        placeholder="Email">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset> <label for="birthdate">Birthday:</label> 
+                                                    <input name="birthdate" type="date" id="birthdate">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset> <label for="avatar">Avatar :</label> 
+                                                    <input name="avatar" type="file" id="avatar">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12 ">
+                                                <fieldset> <label for="gender">Gender :</label> <br>
+                                                    <select name="gender" id="gender">
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
+                                                        <option value="other">Other</option>
+
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="password1" type="password" id="password1"
+                                                        placeholder="Input Your Password">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="password2" type="password" id="password2"
+                                                        placeholder="Confirm Your Password">
+                                                </fieldset>
+                                            </div>
+
+                                            
+
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <button type="submit" id="form-submit"
+                                                        class="main-button">Register</button>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-lg-12 mt-3">
+                                                <span class="">Already a member? <a href="{% url 'login' %}"> Login
+                                                        Now</a></span>
+                                            </div>
+
+                                        </div>
+                                    </form> 
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block script %} 
+<script type="text/javascript">
+$("#register_form").submit(function(e){
+    e.preventDefault();
+    var action = function(d){
+        console.log(d);
+    };
+    
+    
+    var form_Data = new FormData(this);
+    var fname = $("#fname").val();
+    var lname = $("#lname").val();
+    var email = $("#email").val();
+    var birthdate = $("#birthdate").val();
+    var password1= $("#password1").val();
+    var password2 = $("#password2").val();
+    var gender = $("#gender").val();
+    var username = $("#username").val();
+    var avatar = $("#avatar").val();
+
+    
+    // console.log(fname,lname,username,email,birthdate,password2,gender,avatar);
+    
+    
+    if(username == ""){
+        $("#login_success").fadeOut();
+        $("#login_fail").hide();
+        $("#login_fail").text("Please Input Username");
+        $("#login_fail").fadeIn(1000);
+        return
+    }
+    else if(password1 !== password2){
+        $("#login_success").fadeOut();
+        $("#login_fail").fadeOut();
+        $("#login_fail").text("Two password does not match!");
+        $("#login_fail").fadeIn(1000);
+        return
+    }else {
+        $("#login_success").fadeOut();
+        $("#login_fail").fadeOut();
+        $.ajax({
+                url: "{% url 'register' %}",
+                type: "POST",
+                data: form_Data,
+                contentType: false,
+                processData:false,
+                
+            })
+            .done(function(response) {
+                console.log(response["msg"]);
+                var msg = response["msg"];
+                $("#login_success").hide();
+                $("#login_fail").hide();
+                $("#login_success").text(msg);
+                $("#login_success").fadeIn();
+                setTimeout(function(){
+                    window.location = "{% url 'login' %}";
+                },3000);
+                
+
+
+            })
+            .fail(function (response) {
+                    $("#login_success").hide();
+                    $("#login_fail").hide();
+                    $("#login_fail").text(response["msg"]);
+                    $("#login_fail").fadeIn();
+                })
+
+    }
+
+
+});
+</script>
+
+{% endblock %}
